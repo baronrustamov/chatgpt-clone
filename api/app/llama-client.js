@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const { getMessages } = require('../models/Message');
 
 function gen_input_text() {
   return "Human (" + (new Date()).toString() + "): ";
@@ -8,8 +9,8 @@ function gen_assistant_input_text() {
   return "Assistant (" + (new Date()).toString() + "):";
 }
 
-function reset(thread_id) {
-  threads[thread_id] = `Assistant is a large language model called "Assistant", based on the LLaMA model trained by Meta.
+function gen_prompt() {
+  return `Assistant is a large language model called "Assistant", based on the LLaMA model trained by Meta.
 Assistant knows how to do everything, including programming, question and response tasks, writing essays, articles, blogs, and more.
   
 Conversation start date: ` + (new Date()).toString() + `
@@ -20,6 +21,10 @@ Human (time of message): (the human's message)
 Assistant (time of message): (the Assistant's response)
 
 `;
+}
+
+function reset(thread_id) {
+  threads[thread_id] = gen_prompt();
 }
 
 threads = {}
@@ -192,6 +197,30 @@ async function send_message_stream(txt, thread_id, progressCallback) {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+async function generate_history(conversationId) {
+  var ret = "";
+
+  var msgs = await getMessages({ conversationId });
+
+  ret += gen_prompt();
+
+  for (msg in msgs) {
+    msg = msgs[msg];
+    if (msg.sender == "User") {
+      ret += gen_input_text();
+      ret += msg.text;
+      ret += "\n";
+    } else if (msg.sender == "ChatLLaMA") {
+      ret += gen_assistant_input_text();
+      ret += " ";
+      ret += msg.text;
+      ret += "\n";
+    }
+  }
+
+  return ret;
+}
+
 const llamaClient = async ({ text, progressCallback, convo }) => {
 //  if (!!convo.parentMessageId && !!convo.conversationId) {
 //    options = { ...options, ...convo };
@@ -205,7 +234,8 @@ const llamaClient = async ({ text, progressCallback, convo }) => {
     var lolId2 = crypto.randomUUID();
   }
 
-  console.log(lolId);
+  var prompt = await generate_history(lolId);
+  threads[lolId] = prompt;
 
   var rlol = await send_message_stream(text, lolId, progressCallback);
 
@@ -219,6 +249,8 @@ const llamaClient = async ({ text, progressCallback, convo }) => {
     messageId: crypto.randomUUID(),
     details: {}
   };
+
+  console.log(prompt);
 
   const res = returnData;
   return res;
