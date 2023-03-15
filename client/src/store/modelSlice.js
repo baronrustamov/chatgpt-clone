@@ -4,32 +4,37 @@ const initialState = {
   models: [
     {
       _id: '0',
+      name: 'ChatLLaMA',
+      value: 'ChatLLaMA'
+    },
+    {
+      _id: '1',
       name: 'ChatGPT',
       value: 'chatgpt'
     },
     {
-      _id: '1',
+      _id: '2',
       name: 'CustomGPT',
       value: 'chatgptCustom'
     },
     {
-      _id: '2',
+      _id: '3',
       name: 'BingAI',
       value: 'bingai'
     },
     {
-      _id: '3',
+      _id: '4',
       name: 'Sydney',
       value: 'sydney'
     },
     {
-      _id: '4',
+      _id: '5',
       name: 'ChatGPT',
       value: 'chatgptBrowser'
     },
   ],
   modelMap: {},
-  initial: { chatgpt: true, chatgptCustom: true, bingai: true, sydney: true, chatgptBrowser: true }
+  initial: { ChatLLaMA: true, chatgpt: true, chatgptCustom: true, bingai: true, sydney: true, chatgptBrowser: true }
   // initial: { chatgpt: true, chatgptCustom: true, bingai: true, }
 };
 

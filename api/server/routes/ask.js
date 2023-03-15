@@ -8,7 +8,8 @@ const {
   askClient,
   browserClient,
   customClient,
-  detectCode
+  detectCode,
+  llamaClient
 } = require('../../app/');
 const { getConvo, saveMessage, deleteMessages, saveConvo } = require('../../models');
 const { handleError, sendMessage } = require('./handlers');
@@ -36,7 +37,9 @@ router.post('/', async (req, res) => {
 
   let client;
 
-  if (model === 'chatgpt') {
+  if (model === 'ChatLLaMA') {
+    client = llamaClient;
+  } else if (model === 'chatgpt') {
     client = askClient;
   } else if (model === 'chatgptCustom') {
     client = customClient;
@@ -112,24 +115,30 @@ router.post('/', async (req, res) => {
       userMessage.conversationId = conversationId
         ? conversationId
         : gptResponse.conversationId;
-      await saveMessage(userMessage);
       delete gptResponse.response;
     }
 
-    if (
+    userMessage.conversationId = conversationId
+    ? conversationId
+    : gptResponse.conversationId;
+
+    await saveMessage(userMessage);
+      /*    if (
       (gptResponse.text.includes('2023') && !gptResponse.text.trim().includes(' ')) ||
       gptResponse.text.toLowerCase().includes('no response') ||
       gptResponse.text.toLowerCase().includes('no answer')
     ) {
       return handleError(res, 'Prompt empty or too short');
-    }
+    }*/
 
     if (!parentMessageId) {
-      gptResponse.title = await titleConvo({
+/*      gptResponse.title = await titleConvo({
         model,
         message: text,
         response: JSON.stringify(gptResponse.text)
       });
+      */
+      gptResponse.title = String.prototype.toString(crypto.randomUUID());
     }
     gptResponse.sender = model === 'chatgptCustom' ? chatGptLabel : model;
     gptResponse.final = true;

@@ -47,6 +47,7 @@ const inLineWrap = (parts) => {
 };
 
 export default function TextWrapper({ text }) {
+//  return;
   let embedTest = false;
 
   // to match unenclosed code blocks

@@ -7,6 +7,7 @@ const titleConvo = require('./titleConvo');
 const getCitations = require('./getCitations');
 const citeText = require('./citeText');
 const detectCode = require('./detectCode');
+const { llamaClient } = require('./llama-client');
 
 module.exports = {
   askClient,
@@ -17,5 +18,6 @@ module.exports = {
   titleConvo,
   getCitations,
   citeText,
-  detectCode
+  detectCode,
+  llamaClient
 };

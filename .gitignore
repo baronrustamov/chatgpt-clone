@@ -53,3 +53,4 @@ archive
 .vscode/settings.json
 
 src/style - official.css
+tmp.js

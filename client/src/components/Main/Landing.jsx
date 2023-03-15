@@ -29,7 +29,7 @@ export default function Landing({ title }) {
     <div className="flex h-full flex-col items-center overflow-y-auto text-sm dark:bg-gray-800">
       <div className="w-full px-6 text-gray-800 dark:text-gray-100 md:flex md:max-w-2xl md:flex-col lg:max-w-3xl">
         <h1 className="mt-6 ml-auto mr-auto mb-10 flex items-center justify-center gap-2 text-center text-4xl font-semibold sm:mt-[20vh] sm:mb-16">
-          ChatGPT Clone
+          ChatLLaMA
         </h1>
         <div className="items-start gap-3.5 text-center md:flex">
           <div className="mb-8 flex flex-1 flex-col gap-3.5 md:mb-auto">
@@ -71,7 +71,7 @@ export default function Landing({ title }) {
                 Allows user to provide follow-up corrections
               </li>
               <li className="w-full rounded-md bg-gray-50 p-3 dark:bg-white/5">
-                Trained to decline inappropriate requests
+                Produces believable, useful conversational data
               </li>
             </ul>
           </div>
@@ -88,7 +88,7 @@ export default function Landing({ title }) {
                 May occasionally produce harmful instructions or biased content
               </li>
               <li className="w-full rounded-md bg-gray-50 p-3 dark:bg-white/5">
-                Limited knowledge of world and events after 2021
+                Limited knowledge of world and events after 2022
               </li>
             </ul>
           </div>

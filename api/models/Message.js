@@ -43,6 +43,7 @@ const Message = mongoose.models.Message || mongoose.model('Message', messageSche
 module.exports = {
   saveMessage: async ({ id, conversationId, parentMessageId, sender, text }) => {
     try {
+      console.log(id, conversationId, parentMessageId, sender, text);
       await Message.create({
         id,
         conversationId,
