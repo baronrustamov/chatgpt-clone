@@ -13,6 +13,7 @@ import MenuItems from './MenuItems';
 import { swr } from '~/utils/fetchers';
 import { setModels } from '~/store/modelSlice';
 import GPTIcon from '../svg/GPTIcon';
+import LLaMAIconInput from '../svg/LLaMAIconInput';
 import BingIcon from '../svg/BingIcon';
 import { Button } from '../ui/Button.tsx';
 
@@ -129,7 +130,7 @@ export default function ModelMenu() {
 
   const isBing = model === 'bingai' || model === 'sydney';
   const colorProps = model === 'chatgpt' ? chatgptColorProps : defaultColorProps;
-  const icon = isBing ? <BingIcon button={true} /> : <GPTIcon button={true} />;
+  const icon = isBing ? <BingIcon button={true} /> : <LLaMAIconInput button={true} />;
 
   return (
     <Dialog onOpenChange={onOpenChange}>

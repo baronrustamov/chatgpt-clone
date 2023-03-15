@@ -96,7 +96,7 @@ async function predict_stream(input,progressCallback,max_tokens=500,temperature=
       			num_beams,
       			0,
       		  length_penalty,
-      			true,
+      			false,
           ]
         }));
         break;

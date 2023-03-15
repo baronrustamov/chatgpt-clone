@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TextWrapper from './TextWrapper';
 import { useSelector } from 'react-redux';
 import GPTIcon from '../svg/GPTIcon';
+import LLaMAIcon from '../svg/LLaMAIcon';
 import BingIcon from '../svg/BingIcon';
 import HoverButtons from './HoverButtons';
 import Spinner from '../svg/Spinner';
@@ -43,6 +44,7 @@ export default function Message({
 
   const bgColors = {
     chatgpt: 'rgb(16, 163, 127)',
+    ChatLLaMA: 'rgb(16, 163, 127)',
     chatgptBrowser: 'rgb(25, 207, 207)',
     bingai: '',
     sydney: ''
@@ -68,7 +70,7 @@ export default function Message({
         }
         className="relative flex h-[30px] w-[30px] items-center justify-center rounded-sm p-1 text-white"
       >
-        {isBing ? <BingIcon /> : <GPTIcon />}
+        {isBing ? <BingIcon /> : <LLaMAIcon />}
         {error && (
           <span className="absolute right-0 top-[20px] -mr-2 flex h-4 w-4 items-center justify-center rounded-full border border-white bg-red-500 text-[10px] text-white">
             !
