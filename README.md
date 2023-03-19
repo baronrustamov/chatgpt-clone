@@ -1,6 +1,11 @@
 # ChatGPT Clone #
 https://user-images.githubusercontent.com/110412045/223754183-8b7f45ce-6517-4bd5-9b39-c624745bf399.mp4
 
+NOTE: This project is a fork of danny-avila's [ChatGPT Clone](https://github.com/danny-avila/chatgpt-clone), I forked it to implement support for LLaMA.
+My code is pretty jank so you probably won't want to merge back to upstream right now, lol.
+
+---
+
 ## All AI Conversations under One Roof. ##
   Assistant AIs are the future and OpenAI revolutionized this movement with ChatGPT. While numerous methods exist to integrate them, this app commemorates the original styling of ChatGPT, with the ability to integrate any current/future AI models, while improving upon original client features, such as conversation search and prompt templates (currently WIP).
 
