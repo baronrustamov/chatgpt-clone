@@ -138,6 +138,7 @@ router.post('/', async (req, res) => {
         response: JSON.stringify(gptResponse.text)
       });
       */
+//      gptResponse.title = gptResponse.title;
       gptResponse.title = String.prototype.toString(crypto.randomUUID());
     }
     gptResponse.sender = model === 'chatgptCustom' ? chatGptLabel : model;

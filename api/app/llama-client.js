@@ -2,19 +2,20 @@ const WebSocket = require('ws');
 const { getMessages } = require('../models/Message');
 
 function gen_input_text() {
-  return "Human (" + (new Date()).toString() + "): ";
+  return "Human (" + (new Date()).toLocaleString() + "): ";
 }
 
 function gen_assistant_input_text() {
-  return "Assistant (" + (new Date()).toString() + "):";
+  return "Assistant (" + (new Date()).toLocaleString() + "):";
 }
 
 function gen_prompt() {
   return `Assistant is a large language model called "Assistant", based on the LLaMA model trained by Meta.
 Assistant knows how to do everything, including programming, question and response tasks, writing essays, articles, blogs, and more.
-  
-Conversation start date: ` + (new Date()).toString() + `
-Instructions: Reply to "Human" as if you are a person.
+When replies involve writing code, Assistant replies with a code block formatted like this:
+\`\`\`
+(insert block text here)
+\`\`\`
   
 The format used for the conversation is:
 Human (time of message): (the human's message)
@@ -42,6 +43,7 @@ async function predict(input,max_tokens=500,temperature=0.7,top_p=0.01,top_k=40,
     			top_p,
     			1,
     			1.15,
+    			1.0,
     			top_k,
     		  10,
     			no_repeat_ngram_size,
@@ -60,7 +62,7 @@ async function predict(input,max_tokens=500,temperature=0.7,top_p=0.01,top_k=40,
   return rlol;
 }
 
-async function predict_stream(input,progressCallback,max_tokens=500,temperature=0.7,top_p=0.01,top_k=40,no_repeat_ngram_size=0,num_beams=1,do_sample=true,length_penalty=5) {
+async function predict_stream(input,progressCallback,max_tokens=1720,temperature=0.7,top_p=0.01,top_k=40,no_repeat_ngram_size=0,num_beams=1,do_sample=true,length_penalty=5) {
   const socket = new WebSocket("ws://172.17.0.1:7860/queue/join");
 
   session_hash = crypto.randomUUID();
@@ -70,6 +72,8 @@ async function predict_stream(input,progressCallback,max_tokens=500,temperature=
   done_with_genning = false;
 
   fin_gen_lol = "PLACEHOLDER";
+
+  final_prompt_lol = "PLACEHOLDER";
 
   socket.onmessage = (event) => {
     const msg = JSON.parse(event.data);
@@ -95,6 +99,7 @@ async function predict_stream(input,progressCallback,max_tokens=500,temperature=
       			top_p,
       			1,
       			1.15,
+      			1.0,
       			top_k,
       		  10,
       			no_repeat_ngram_size,
@@ -111,14 +116,15 @@ async function predict_stream(input,progressCallback,max_tokens=500,temperature=
         try {
           var s = msg.output.data[0].slice(length_current);
           length_current += s.length;
-          console.log(s);
+//          console.log(s);
           if (msg.output.data[0].slice(input.length) == fin_gen_lol) {
-            socket.close();
-            done_with_genning = true;
-            break;
+//            socket.close();
+//            done_with_genning = true;
+//            break;
           }
           fin_gen_lol = msg.output.data[0].slice(input.length);
-          console.log(fin_gen_lol)
+          final_prompt_lol = msg.output.data[0];
+//          console.log(fin_gen_lol)
           if (fin_gen_lol.includes("\nHuman (")) {
             socket.close();
             done_with_genning = true;
@@ -162,6 +168,8 @@ async function predict_stream(input,progressCallback,max_tokens=500,temperature=
     fin_gen_lol = "(empty output)";
   }
 
+  socket.close();
+
   return fin_gen_lol.trim();
 }
 
@@ -189,7 +197,7 @@ async function send_message_stream(txt, thread_id, progressCallback) {
   }
 
   threads[thread_id] += input_text + txt + "\n" + assistant_input_text;
-  tmp = await predict_stream(threads[thread_id], progressCallback, max_tokens=500, temperature=0.7, top_p=0.01, top_k=40);
+  tmp = await predict_stream(threads[thread_id], progressCallback, max_tokens=1720, temperature=0.7, top_p=0.01, top_k=40);
 //  tmp = (tmp.slice(threads[thread_id].length));
   threads[thread_id] += tmp + "\n";
   return tmp;
@@ -221,6 +229,20 @@ async function generate_history(conversationId) {
   return ret;
 }
 
+async function generate_title(conversationId) {
+  var history = await generate_history(conversationId);
+  var prompt = history + "\n\nSummarize the conversation in 5 words or less.\nThe conversation would be titled \"";
+
+  var title = await predict_stream(prompt, function (){}, 50);
+
+  title = title.split("\n")[0];
+
+  title.replace("\"", "");
+  title.replace(".", "");
+
+  return title;
+}
+
 const llamaClient = async ({ text, progressCallback, convo }) => {
 //  if (!!convo.parentMessageId && !!convo.conversationId) {
 //    options = { ...options, ...convo };
@@ -239,6 +261,10 @@ const llamaClient = async ({ text, progressCallback, convo }) => {
 
   var rlol = await send_message_stream(text, lolId, progressCallback);
 
+//  var title = await generate_title(lolId);
+
+//  console.log(title);
+
   const returnData = {
     id: crypto.randomUUID(),
     response: rlol,
@@ -247,10 +273,11 @@ const llamaClient = async ({ text, progressCallback, convo }) => {
     conversationId: lolId,
     parentMessageId: lolId2,
     messageId: crypto.randomUUID(),
-    details: {}
+    details: {},
+//    title: title
   };
 
-  console.log(prompt);
+//  console.log(prompt);
 
   const res = returnData;
   return res;
